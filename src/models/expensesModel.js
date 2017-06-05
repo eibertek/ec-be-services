@@ -1,20 +1,21 @@
 /** expenses.js **/
+import mongoose from 'mongoose';
 
-var Expenses = function (data) {
-this.data = data;
+class expenses extends mongoose.Schema 
+{
+    constructor() {
+        super({
+            id: { type:String, required:true, unique:true},
+            name: { type:String, required:true, unique:true},
+            description: String,
+            currency: String,
+            value: Number,
+            created_at:Date,
+            updated_at:Date,
+            categoryId: String,
+            userId: String
+        });
+    }
 }
 
-Eexpenses.prototype.data = {}
-
-Expenses.prototype.changeName = function (name) {
-this.data.name = name;
-}
-
-Expenses.findById = function (id, callback) {
-    db.get('expenses', {id: id}).run(function (err, data) {
-    if (err) return callback(err);
-    callback(null, new Expenses(data));
-    });
-}
-
-module.exports = Expenses;
+export default mongoose.model('expenses', new expenses());

@@ -1,9 +1,10 @@
 import { Router} from 'express';
+import config from '../conf/dev.conf.js';
 
 let api = Router();
 
 api.all('/api/*', function (req, res, next) {
-  if(req.headers.authorization === 'marianoeibermanesgenial')
+  if(req.headers.authorization === config.AuthKey)
   {
        return next();
   }    

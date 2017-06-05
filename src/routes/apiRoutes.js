@@ -1,5 +1,4 @@
 import { Router} from 'express';
-
 let api = Router();
 
 api.get('/list', function (req, res, next) {
@@ -13,4 +12,5 @@ api.get('/list', function (req, res, next) {
              );
 });
 
-export default api;
+
+export default api; 
