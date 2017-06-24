@@ -10,6 +10,7 @@ import auth from './middleware/auth';
 import config from './conf/dev.conf.js';
 import bodyParser from 'body-parser';
 import mongoose from 'mongoose';
+import './routes/connection.js';
 
 let app = express();
 app.use(auth);

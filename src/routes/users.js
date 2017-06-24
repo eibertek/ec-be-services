@@ -10,26 +10,10 @@ import config from '../conf/dev.conf.js';
 const dbString = 'mongodb://localhost:27017/etek01';  
 let itsConnected=false;
 let api = Router();
-
 mongoose.connect(dbString);
-
-mongoose.connection.on('connected', function () {  
-  console.log('Mongoose default connection open to ' + dbString);
-}); 
-
-// If the connection throws an error
-mongoose.connection.on('error',function (err) {  
-  console.log('Mongoose default connection error: ' + err);
-}); 
-
-// When the connection is disconnected
-mongoose.connection.on('disconnected', function () {  
-  console.log('Mongoose default connection disconnected'); 
-});
-
-
 api.get('/:user', function (req, res) {
-  usersModel.find({'id':req.params.user}).then((data)=>{
+  let search = req.params.user ? {'id':req.params.user} : {}
+  usersModel.find(search).then((data)=>{
     return res.status(200).json(data);
   });
   //return res.status(401).send("Not ready yet");
@@ -56,6 +40,7 @@ api.post('/new', function (req, res) {
       });
       user.save(() => {
         console.log('grabando');
+        mongoose.connection.close();        
         return res.status(200).json({status:'ok'});
       });
   });
