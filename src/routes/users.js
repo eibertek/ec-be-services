@@ -3,37 +3,46 @@ import mongoose from 'mongoose';
 import usersModel from '../models/usersModel';
 import {status} from '../models/usersModel';
 import uuid from 'uuid';
+import config from '../conf/dev.conf.js';
+
 
 //const dbString = 'mongodb://etek001:m1a9r8i4@etek01-shard-00-00-ryd3a.mongodb.net:27017,etek01-shard-00-01-ryd3a.mongodb.net:27017,etek01-shard-00-02-ryd3a.mongodb.net:27017/etek01?ssl=true&replicaSet=etek01-shard-0&authSource=admin';  
-const dbString = 'mongodb://localhost';  
+const dbString = 'mongodb://localhost:27017/etek01';  
 let itsConnected=false;
 let api = Router();
 
-mongoose.connect(dbString).then(() => {
-  itsConnected=true;
-}).catch(err =>{
-  console.log(err);
-});
-  
-api.get('*', (req, res, next)=>{
-  if(!itsConnected) {
-    return res.json({err:'Database are not connected'});
-  }
-  next();
+mongoose.connect(dbString);
+
+mongoose.connection.on('connected', function () {  
+  console.log('Mongoose default connection open to ' + dbString);
 }); 
 
-api.get('/', function (req, res) {
-  return res.status(401).send("Not ready yet");
+// If the connection throws an error
+mongoose.connection.on('error',function (err) {  
+  console.log('Mongoose default connection error: ' + err);
+}); 
+
+// When the connection is disconnected
+mongoose.connection.on('disconnected', function () {  
+  console.log('Mongoose default connection disconnected'); 
 });
+
+
+api.get('/:user', function (req, res) {
+  usersModel.find({'id':req.params.user}).then((data)=>{
+    return res.status(200).json(data);
+  });
+  //return res.status(401).send("Not ready yet");
+});
+
 api.post('/new', function (req, res) {
   let result= validateData(req.body);
   if(result !== true){
     return res.status(500).json({status:result});
   }
   validateExistingUser(req.body).then((result, err)=>{
-    console.log(result, err);    
-    if(result !== true){
-      return res.status(500).json({status:result, error:err});
+    if(result.length && result.length > 0 ){
+      return res.status(500).json({status:0, error:'User already exist'});
     }
     //save user and send mail about
       let user = new usersModel({

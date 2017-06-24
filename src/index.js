@@ -9,6 +9,7 @@ import users from './routes/users';
 import auth from './middleware/auth';
 import config from './conf/dev.conf.js';
 import bodyParser from 'body-parser';
+import mongoose from 'mongoose';
 
 let app = express();
 app.use(auth);
@@ -24,3 +25,11 @@ app.use((req,res,next) => {
 http.createServer(app).listen(3000, () => { 
     console.log('Server starts at 3000');
 });
+
+// If the Node process ends, close the Mongoose connection 
+process.on('SIGINT', function() {  
+  mongoose.connection.close(function () { 
+    console.log('Mongoose default connection disconnected through app termination'); 
+    process.exit(0); 
+  }); 
+}); 

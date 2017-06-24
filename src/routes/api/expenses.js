@@ -43,17 +43,6 @@ api.get('/new', function (req, res) {
   return processPromise(req, res);
 });
 
-api.get('/new', function (req, res) {
-  const dataQuery = req.query;
-  if(!dataQuery.name){
-    return res.json({
-      status:500, 
-      error:'No data sent!'
-    })
-  }
-  return processPromise(req, res);
-});
-
 api.get('/edit', function (req, res) {
   const dataQuery = req.query;
   if(!dataQuery.name){
@@ -78,12 +67,12 @@ const processPromise = (req, res) => {
   return saveExpense(dataQuery.name, dataQuery.value).then(
   (dat)=>{
     return res.json({
-      err: dat
+      status: dat
     })
   },
   (dat)=>{
     return res.json({
-      status: dat
+      err: dat
     })
   });
 }
